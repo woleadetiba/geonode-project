@@ -70,11 +70,14 @@ SESSION_COOKIE_SECURE = True
 
 # Same hostname serves LUC on :443 and GeoNode on :8443. Browsers share
 # host-only cookies across ports, so default csrftoken/sessionid collide and
-# login CSRF fails. Use GeoNode-specific names.
+# login CSRF fails. Unique cookie names + store CSRF in the session.
 CSRF_COOKIE_NAME = "geonode_csrftoken"
 SESSION_COOKIE_NAME = "geonode_sessionid"
 CSRF_COOKIE_SAMESITE = "Lax"
 SESSION_COOKIE_SAMESITE = "Lax"
+CSRF_USE_SESSIONS = True
+CSRF_COOKIE_DOMAIN = None
+SESSION_COOKIE_DOMAIN = None
 
 # Defines the directory that contains the settings file as the LOCAL_ROOT
 # It is used for relative settings elsewhere.
