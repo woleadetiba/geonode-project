@@ -60,6 +60,14 @@ ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"
 if "geonode_project.middleware.ForceHttpsSchemeMiddleware" not in MIDDLEWARE:
     MIDDLEWARE = ["geonode_project.middleware.ForceHttpsSchemeMiddleware", *MIDDLEWARE]
 
+# Login POST Origin is https://host:8443 — must be trusted or CSRF 403.
+_csrf_origins = list(globals().get("CSRF_TRUSTED_ORIGINS") or [])
+if _siteurl_origin not in _csrf_origins:
+    _csrf_origins.append(_siteurl_origin)
+CSRF_TRUSTED_ORIGINS = _csrf_origins
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+
 # Defines the directory that contains the settings file as the LOCAL_ROOT
 # It is used for relative settings elsewhere.
 LOCAL_ROOT = os.path.abspath(os.path.dirname(__file__))
