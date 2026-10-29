@@ -39,6 +39,15 @@ if not SITEURL.endswith("/"):
 
 SITENAME = os.getenv("SITENAME", "geonode_project")
 
+# MapStore: empty USE_CORS forces absolute catalogue URLs through /proxy/?url=,
+# which returns 403 ("Invalid URL provided") → "Page Loading Error".
+# Same-origin SITEURL lets the client call /api/v2 directly.
+_siteurl_origin = SITEURL.rstrip("/")
+USE_CORS = [
+    _siteurl_origin,
+    _siteurl_origin.replace("https://", "http://"),
+]
+
 # Defines the directory that contains the settings file as the LOCAL_ROOT
 # It is used for relative settings elsewhere.
 LOCAL_ROOT = os.path.abspath(os.path.dirname(__file__))
