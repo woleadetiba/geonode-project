@@ -40,22 +40,25 @@ if not SITEURL.endswith("/"):
 SITENAME = os.getenv("SITENAME", "geonode_project")
 
 # MapStore client reads MAPSTORE_USE_CORS (exposed as GEONODE_SETTINGS.USE_CORS).
-# Empty list → absolute catalogue URLs go through /proxy/?url= → 403
-# "Invalid URL provided" → "Page Loading Error".
 from urllib.parse import urlparse
 
 _siteurl_origin = SITEURL.rstrip("/")
 _site_host = urlparse(SITEURL).hostname
-MAPSTORE_USE_CORS = [
-    _siteurl_origin,
-    _siteurl_origin.replace("https://", "http://"),
-]
+MAPSTORE_USE_CORS = [_siteurl_origin]
 if _site_host:
     _proxy_hosts = list(PROXY_ALLOWED_HOSTS) if PROXY_ALLOWED_HOSTS else []
     for _h in (_site_host, f".{_site_host}"):
         if _h not in _proxy_hosts:
             _proxy_hosts.append(_h)
     PROXY_ALLOWED_HOSTS = tuple(_proxy_hosts)
+
+# TLS terminates at luc-nginx. Without this, DRF /api/v2/ returns http:// links
+# and MapStore hits mixed-content → "Page Loading Error".
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+USE_X_FORWARDED_HOST = True
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"
+if "geonode_project.middleware.ForceHttpsSchemeMiddleware" not in MIDDLEWARE:
+    MIDDLEWARE = ["geonode_project.middleware.ForceHttpsSchemeMiddleware", *MIDDLEWARE]
 
 # Defines the directory that contains the settings file as the LOCAL_ROOT
 # It is used for relative settings elsewhere.
