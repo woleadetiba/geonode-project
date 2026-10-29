@@ -1,4 +1,4 @@
-FROM geonode/geonode-base:latest-ubuntu-24.04
+FROM geonode/geonode-base:latest-ubuntu-26.04
 RUN mkdir -p /usr/src/project
 
 RUN apt-get update -y && apt-get install curl wget unzip gnupg2 locales -y
